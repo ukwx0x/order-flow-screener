@@ -1,5 +1,7 @@
 import { OG_ALT, OG_SIZE, renderShareImage } from "@/lib/og";
 
+export const dynamic = "force-static";
+
 // X/Twitter "summary_large_image" uses the same 1200×630 card.
 export const alt = OG_ALT;
 export const size = OG_SIZE;

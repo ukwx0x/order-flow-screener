@@ -9,7 +9,8 @@ import { SITE } from "@/lib/site";
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_ALT = `${SITE.name} — real-time footprint, order book, CVD, volume z-score and realized volatility for crypto and FX`;
 
-const font = (file: string) => readFile(join(process.cwd(), "assets/fonts", file));
+const font = async (file: string): Promise<Buffer | null> =>
+  readFile(join(process.cwd(), "assets/fonts", file)).catch(() => null);
 
 const C = {
   bg: "#08090b",
@@ -42,6 +43,14 @@ const FONTS = Promise.all([font("Geist-Bold.ttf"), font("Geist-Medium.ttf"), fon
 
 export async function renderShareImage() {
   const [bold, medium, mono] = await FONTS;
+
+  // Fonts are optional: when the font files are absent (for example in a
+  // deployment that excludes binary assets), the image renders with the
+  // default font instead of failing the build.
+  const fonts: { name: string; data: Buffer; weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900; style: "normal" }[] = [];
+  if (bold) fonts.push({ name: "Geist", data: bold, weight: 700, style: "normal" });
+  if (medium) fonts.push({ name: "Geist", data: medium, weight: 500, style: "normal" });
+  if (mono) fonts.push({ name: "Geist Mono", data: mono, weight: 600, style: "normal" });
 
   return new ImageResponse(
     (
@@ -182,11 +191,7 @@ export async function renderShareImage() {
     ),
     {
       ...OG_SIZE,
-      fonts: [
-        { name: "Geist", data: bold, weight: 700, style: "normal" },
-        { name: "Geist", data: medium, weight: 500, style: "normal" },
-        { name: "Geist Mono", data: mono, weight: 600, style: "normal" },
-      ],
+      fonts,
     }
   );
 }

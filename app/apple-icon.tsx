@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import { LOGO_DATA_URI } from "@/lib/og";
 
+export const dynamic = "force-static";
+
 // iOS home-screen / Safari pinned icon (opaque, 180×180).
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
